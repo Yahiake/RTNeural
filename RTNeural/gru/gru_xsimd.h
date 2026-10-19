@@ -328,9 +328,8 @@ private:
         for(int i = 0; i < v_out_size; ++i)
             out[i] = v_type(0);
 
-        // Clamp each SIMD vector's lane range to the matrix rows: mat is
-        // [out_size][v_out_size], so the trailing partial vector would read past
-        // the end of the array when out_size % v_size != 0.
+		/**  Clamp the final SIMD batch to out_size to avoid reading past the */
+		/**  recurrent matrix when out_size is not a multiple of v_size. */
         T scalar_in alignas(RTNEURAL_DEFAULT_ALIGNMENT)[v_size] { (T)0 };
         for(int k = 0; k < v_out_size; ++k)
         {
@@ -350,7 +349,8 @@ private:
         for(int i = 0; i < v_out_size; ++i)
             out[i] = v_type(0);
 
-        // Same clamp as recurrent_mat_mul, against the in_size dimension.
+		/**  Clamp the final SIMD batch to in_size to avoid reading past */
+		/**  the input weights matrix when the input size is not SIMD-aligned. */
         T scalar_in alignas(RTNEURAL_DEFAULT_ALIGNMENT)[v_size] { (T)0 };
         for(int k = 0; k < v_in_size; ++k)
         {

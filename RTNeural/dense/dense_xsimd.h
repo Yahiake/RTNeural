@@ -165,10 +165,8 @@ public:
         for(int i = 0; i < v_out_size; ++i)
             outs[i] = bias[i];
 
-        // Clamp each SIMD vector's lane range to the actual input rows:
-        // weights is [in_size][v_out_size], so when in_size % v_size != 0 the
-        // last vector would read past the end of the array. The skipped padding
-        // lanes are always zero, so the sum is unchanged.
+		/** Clamp the final SIMD batch to the actual input size. The weights matrix */
+		/** has exactly in_size rows, which may not fill the final SIMD batch. */
         T scalar_in alignas(RTNEURAL_DEFAULT_ALIGNMENT)[v_size] { (T)0 };
         for(int k = 0; k < v_in_size; ++k)
         {
@@ -190,7 +188,7 @@ public:
         for(int i = 0; i < v_out_size; ++i)
             outs[i] = v_type((T)0.0);
 
-        // Same padding-lane clamp as the biased case above; see that comment.
+        /** Same padding-lane clamp as the biased case above; see that comment. */
         T scalar_in alignas(RTNEURAL_DEFAULT_ALIGNMENT)[v_size] { (T)0 };
         for(int k = 0; k < v_in_size; ++k)
         {
