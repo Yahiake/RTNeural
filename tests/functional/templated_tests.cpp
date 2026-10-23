@@ -189,6 +189,9 @@ TEST(TestTemplatedModels, gruTHandlesNonAlignedDimensions)
         alignas(RTNEURAL_DEFAULT_ALIGNMENT)
             TestType paddedInput[vInSize * simdWidth] = {};
 
+        for(int i = 0; i < vInSize * simdWidth; ++i)
+            paddedInput[i] = 1.25 + 0.1 * i;
+
         for(int i = 0; i < inSize; ++i)
             paddedInput[i] = samples[step][i];
 
@@ -196,6 +199,19 @@ TEST(TestTemplatedModels, gruTHandlesNonAlignedDimensions)
         for(int i = 0; i < vInSize; ++i)
             input[i] = xsimd::load_aligned(
                 paddedInput + i * simdWidth);
+
+        alignas(RTNEURAL_DEFAULT_ALIGNMENT)
+            TestType paddedState[vOutSize * simdWidth] = {};
+
+        for(int i = 0; i < hiddenSize; ++i)
+            paddedState[i] = state[i];
+
+        for(int i = hiddenSize; i < vOutSize * simdWidth; ++i)
+            paddedState[i] = 1.25 + 0.1 * i;
+
+        for(int i = 0; i < vOutSize; ++i)
+            gru.outs[i] = xsimd::load_aligned(
+                paddedState + i * simdWidth);
 
         gru.forward(input);
 
@@ -313,6 +329,9 @@ TEST(TestTemplatedModels, lstmTHandlesNonAlignedDimensions)
         alignas(RTNEURAL_DEFAULT_ALIGNMENT)
             TestType paddedInput[vInSize * simdWidth] = {};
 
+        for(int i = 0; i < vInSize * simdWidth; ++i)
+            paddedInput[i] = 1.25 + 0.1 * i;
+
         for(int i = 0; i < inSize; ++i)
             paddedInput[i] = samples[step][i];
 
@@ -321,6 +340,19 @@ TEST(TestTemplatedModels, lstmTHandlesNonAlignedDimensions)
         for(int i = 0; i < vInSize; ++i)
             input[i] = xsimd::load_aligned(
                 paddedInput + i * simdWidth);
+
+        alignas(RTNEURAL_DEFAULT_ALIGNMENT)
+            TestType paddedState[vOutSize * simdWidth] = {};
+
+        for(int i = 0; i < hiddenSize; ++i)
+            paddedState[i] = hidden[i];
+
+        for(int i = hiddenSize; i < vOutSize * simdWidth; ++i)
+            paddedState[i] = 1.25 + 0.1 * i;
+
+        for(int i = 0; i < vOutSize; ++i)
+            lstm.outs[i] = xsimd::load_aligned(
+                paddedState + i * simdWidth);
 
         lstm.forward(input);
 
