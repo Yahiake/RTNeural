@@ -41,6 +41,7 @@ void runTestTemplated(const TestConfig& test)
     EXPECT_THAT(yDataDynamic, Pointwise(DoubleNear(test.threshold), yRefData));
 }
 }
+#if RTNEURAL_USE_XSIMD
 TEST(TestTemplatedModels, denseTHandlesNonAlignedInputSize)
 {
     constexpr int inSize = 3;
@@ -340,6 +341,8 @@ TEST(TestTemplatedModels, lstmTHandlesNonAlignedDimensions)
         }
     }
 }
+
+#endif
 
 TEST(TestTemplatedModels, modelOutputMatchesPythonImplementationForDense)
 {
